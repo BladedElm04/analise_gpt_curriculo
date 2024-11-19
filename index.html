@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise de Currículos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #resultado {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Análise de Currículos</h1>
+  <form id="formulario" enctype="multipart/form-data">
+    <label for="pdf">Currículo (PDF):</label>
+    <input type="file" id="pdf" name="pdf" accept=".pdf" required>
+
+    <label for="cargo">Cargo:</label>
+    <input type="text" id="cargo" name="cargo" placeholder="Exemplo: Desenvolvedor Python" required>
+
+    <label for="competencias">Competências (separadas por vírgula):</label>
+    <input type="text" id="competencias" name="competencias" placeholder="Exemplo: Python, Django, REST API, SQL" required>
+
+    <label for="experiencia">Experiência:</label>
+    <input type="text" id="experiencia" name="experiencia" placeholder="Exemplo: Experiência mínima de 2 anos" required>
+
+    <label for="educacao">Educação:</label>
+    <input type="text" id="educacao" name="educacao" placeholder="Exemplo: Graduação em Ciência da Computação" required>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <div id="resultado"></div>
+
+  <script>
+    document.getElementById("formulario").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const resultadoDiv = document.getElementById("resultado");
+
+      resultadoDiv.textContent = "Processando...";
+
+      fetch("backend.php", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.sucesso) {
+            resultadoDiv.innerHTML = `
+              <h3>Resultado da Análise:</h3>
+              <p>${data.mensagem}</p>
+            `;
+          } else {
+            resultadoDiv.textContent = `Erro: ${data.erro}`;
+          }
+        })
+        .catch((error) => {
+          resultadoDiv.textContent = `Erro ao processar a requisição: ${error}`;
+        });
+    });
+  </script>
+</body>
+</html>
